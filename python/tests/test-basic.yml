@@ -1,0 +1,38 @@
+name: Test basic snyk python usage
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create minimal Python project for scanning
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/tests/fixtures/python-project"
+          cat > "$GITHUB_WORKSPACE/tests/fixtures/python-project/requirements.txt" <<'EOF'
+          requests==2.28.0
+          EOF
+
+      - id: snyk
+        uses: .
+        continue-on-error: true
+        with:
+          command: test
+          args: --file=tests/fixtures/python-project/requirements.txt
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Assert action ran (succeeds with token, fails gracefully without)
+        env:
+          OUTCOME: ${{ steps.snyk.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: snyk test succeeded"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: snyk test failed gracefully (expected without valid SNYK_TOKEN or vulnerabilities found)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

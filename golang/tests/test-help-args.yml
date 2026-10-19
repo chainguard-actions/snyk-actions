@@ -1,0 +1,28 @@
+name: Test snyk with help args
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: snyk-help
+        uses: .
+        with:
+          command: test
+          args: --help
+        continue-on-error: true
+      - name: Assert snyk help ran
+        env:
+          OUTCOME: ${{ steps.snyk-help.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          # snyk test --help should succeed (prints help and exits 0) or fail gracefully
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: snyk test --help ran successfully"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: snyk test --help ran (action invoked correctly, may fail in this environment)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

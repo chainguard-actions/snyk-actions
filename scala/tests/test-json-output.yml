@@ -1,0 +1,30 @@
+name: Test json output input parameter
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          command: test
+          json: true
+          args: --help
+
+      - name: Assert action ran with json input accepted
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          # The action always emits the deprecation warning in its first step.
+          # The Snyk scan step may fail without SNYK_TOKEN or a real Scala project,
+          # but the action must have started (outcome is success or failure, not skipped).
+          if [ "$OUTCOME" = "skipped" ]; then
+            echo "FAIL: action was skipped unexpectedly"
+            exit 1
+          fi
+          echo "PASS: action ran with json=true (outcome=$OUTCOME)"

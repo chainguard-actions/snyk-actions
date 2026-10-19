@@ -1,0 +1,49 @@
+# WARNING: This file is generated, do not edit! Edit _templates/action.yml.erb instead.
+
+name: "Snyk Gradle (jdk14)"
+description: "Check your Gradle application for vulnerabilities using Snyk"
+author: "Snyk Ltd"
+branding:
+  icon: "alert-triangle"
+  color: "yellow"
+inputs:
+  command:
+    description: "Which Snyk command to run, defaults to test"
+    default: test
+  args:
+    description: "Additional arguments to pass to Snyk"
+  json:
+    description: "Output a snyk.json file with results if running the test command"
+    default: false
+runs:
+  using: "composite"
+  steps:
+    - name: Chainguard usage telemetry
+      shell: bash
+      run: |
+        # Best-effort, fails open. Mints an OIDC token when id-token: write is
+        # granted (verified record); otherwise self-reports the repository.
+        tok=""
+        if [ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ] && [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
+          tok=$(curl -sf --max-time 2 \
+            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=actions.chainguard.dev" \
+            | sed -n 's/.*"value":"\([^"]*\)".*/\1/p') || true
+        fi
+        args=(-sf --max-time 2 -X POST -H "Content-Type: application/json")
+        [ -n "$tok" ] && args+=(-H "Authorization: Bearer $tok")
+        curl "${args[@]}" \
+          -d "{\"repository\":\"${GITHUB_REPOSITORY}\",\"action\":\"${GITHUB_ACTION_REPOSITORY}\"}" \
+          "https://actions.enforce.dev/actions/v1/record" >/dev/null 2>&1 || true
+    - name: Show deprecation warning
+      shell: bash
+      run: echo "::warning title=Deprecated Action::The action gradle-jdk14 is deprecated. Please visit Snyk actions at https://github.com/snyk/actions for a newer version."
+
+    - name: Run Snyk scan
+      uses: docker://snyk/snyk:gradle-jdk14@sha256:55fdd8274733724310e2864aeb3ea34bca94ce0e7f5ae32eb13da2a6544ae65e
+      env:
+        FORCE_COLOR: 2
+        SNYK_INTEGRATION_NAME: GITHUB_ACTIONS
+        SNYK_INTEGRATION_VERSION: gradle-jdk14
+      with:
+        args: snyk ${{ inputs.command }} ${{ inputs.args }}

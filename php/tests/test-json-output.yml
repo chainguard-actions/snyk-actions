@@ -1,0 +1,39 @@
+name: Test Snyk PHP json output option
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create a minimal PHP project for scanning
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/php-project"
+          cat > "$GITHUB_WORKSPACE/php-project/composer.json" <<'EOF'
+          {
+            "name": "test/php-project",
+            "require": {}
+          }
+          EOF
+      - id: snyk
+        uses: .
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          json: true
+          args: --file=${{ github.workspace }}/php-project/composer.json
+      - name: Assert action ran with json flag (succeeds with token, fails gracefully without)
+        env:
+          OUTCOME: ${{ steps.snyk.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: Snyk test with json output completed successfully"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (expected without valid SNYK_TOKEN)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

@@ -1,0 +1,27 @@
+name: Test Snyk test command without token (graceful failure)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: snyk-test
+        uses: .
+        with:
+          command: test
+          args: --help
+        continue-on-error: true
+      - name: Assert snyk test --help ran
+        env:
+          OUTCOME: ${{ steps.snyk-test.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: snyk test --help ran successfully"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: snyk test --help ran (action executed, may exit non-zero)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

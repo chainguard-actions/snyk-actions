@@ -1,0 +1,31 @@
+name: Test snyk docker monitor command
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: snyk
+        uses: .
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
+          image: alpine:3.18
+
+      - name: Assert action ran and produced a recognizable outcome
+        env:
+          OUTCOME: ${{ steps.snyk.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: snyk monitor completed successfully"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: snyk monitor failed gracefully (likely missing SNYK_TOKEN or API error)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

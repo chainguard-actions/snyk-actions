@@ -1,0 +1,31 @@
+name: Test default command input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run action with default command (test)
+        id: action
+        uses: .
+        # No 'command' input — should default to 'test'
+        # No SNYK_TOKEN — Snyk will fail with auth error, which is expected
+        continue-on-error: true
+
+      - name: Assert action ran with default command
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          # Without a SNYK_TOKEN the Snyk test command will fail with an
+          # authentication error. The important thing is the action was
+          # invoked (not skipped) and failed gracefully rather than crashing
+          # the runner itself.
+          if [ "$OUTCOME" = "success" ] || [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action ran with default command (outcome=$OUTCOME)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

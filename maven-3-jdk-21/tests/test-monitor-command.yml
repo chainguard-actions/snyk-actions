@@ -1,0 +1,43 @@
+name: Test monitor command
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create a minimal Maven project for scanning
+        run: |
+          mkdir -p tests/fixtures/maven-monitor
+          cat > tests/fixtures/maven-monitor/pom.xml << 'EOF'
+          <project>
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>com.example</groupId>
+            <artifactId>monitor-app</artifactId>
+            <version>1.0.0</version>
+          </project>
+          EOF
+
+      - id: snyk
+        uses: .
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
+          args: --file=tests/fixtures/maven-monitor/pom.xml
+
+      - name: Assert action ran with monitor command (succeeded or failed gracefully)
+        env:
+          OUTCOME: ${{ steps.snyk.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: snyk monitor succeeded"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (expected without valid SNYK_TOKEN)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

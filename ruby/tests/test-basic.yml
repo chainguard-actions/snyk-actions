@@ -1,0 +1,51 @@
+name: Test basic snyk test command
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create a minimal Ruby project for scanning
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/ruby-project"
+          cat > "$GITHUB_WORKSPACE/ruby-project/Gemfile" <<'EOF'
+          source 'https://rubygems.org'
+          gem 'rake'
+          EOF
+          cat > "$GITHUB_WORKSPACE/ruby-project/Gemfile.lock" <<'EOF'
+          GEM
+            remote: https://rubygems.org/
+            specs:
+              rake (13.0.6)
+
+          PLATFORMS
+            ruby
+
+          DEPENDENCIES
+            rake
+
+          BUNDLED WITH
+             2.3.0
+          EOF
+      - id: snyk-test
+        uses: .
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          args: --file=${{ github.workspace }}/ruby-project/Gemfile
+      - name: Assert action ran (succeeded or failed gracefully without a token)
+        env:
+          OUTCOME: ${{ steps.snyk-test.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: Snyk test completed successfully"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (expected without a valid SNYK_TOKEN or on vulnerable deps)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

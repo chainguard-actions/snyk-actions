@@ -1,0 +1,36 @@
+name: Test specific version installation
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          snyk-version: v1.1293.1
+          os: Linux
+      - name: Assert version output is set
+        env:
+          VERSION: ${{ steps.action.outputs.version }}
+        run: |
+          echo "version: $VERSION"
+          if [ -z "$VERSION" ]; then
+            echo "FAIL: version output is empty"
+            exit 1
+          fi
+          echo "PASS: version output is '$VERSION'"
+      - name: Assert installed version matches requested version
+        env:
+          VERSION: ${{ steps.action.outputs.version }}
+        run: |
+          echo "Requested version: 1.1293.1"
+          echo "Installed version: $VERSION"
+          # The version output from snyk may or may not include the 'v' prefix
+          NORMALIZED="${VERSION#v}"
+          if [ "$NORMALIZED" != "1.1293.1" ]; then
+            echo "FAIL: expected version '1.1293.1' but got '$NORMALIZED'"
+            exit 1
+          fi
+          echo "PASS: correct version installed"

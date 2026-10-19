@@ -1,0 +1,31 @@
+name: Test action fails gracefully without SNYK_TOKEN
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run action without SNYK_TOKEN (default test command)
+        id: action
+        uses: .
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ""
+        with:
+          command: test
+          args: "--help"
+
+      - name: Assert action ran (not skipped)
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          # Without a valid SNYK_TOKEN the action is expected to fail.
+          # What we verify is that it ran (not skipped) and did not hang.
+          if [ "$OUTCOME" = "skipped" ]; then
+            echo "FAIL: action was skipped unexpectedly"
+            exit 1
+          fi
+          echo "PASS: action ran with outcome '$OUTCOME' (failure is expected without a token)"

@@ -1,0 +1,28 @@
+# WARNING: This file is generated, do not edit! Edit _templates/action.yml.erb instead.
+
+name: "Snyk Maven"
+description: "Check your Maven application for vulnerabilities using Snyk"
+author: "Snyk Ltd"
+branding:
+  icon: "alert-triangle"
+  color: "yellow"
+inputs:
+  command:
+    description: "Which Snyk command to run, defaults to test"
+    default: test
+  args:
+    description: "Additional arguments to pass to Snyk"
+  json:
+    description: "Output a snyk.json file with results if running the test command"
+    default: false
+runs:
+  using: "docker"
+  image: "docker://snyk/snyk:maven@sha256:12c5cf575d64b4f44fd0b5ea8e59196d65c621d2d58f1370ed512034d0d05649"
+  env:
+    FORCE_COLOR: 2
+    SNYK_INTEGRATION_NAME: GITHUB_ACTIONS
+    SNYK_INTEGRATION_VERSION: maven
+    SNYK_COMMAND: ${{ inputs.command }}
+    SNYK_ARGS: ${{ inputs.args }}
+  args:
+  - snyk

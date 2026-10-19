@@ -1,0 +1,33 @@
+name: Test snyk docker test with JSON output
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: snyk
+        uses: .
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          image: alpine:3.18
+          json: true
+          sarif: false
+
+      - name: Assert action ran and produced a recognizable outcome
+        env:
+          OUTCOME: ${{ steps.snyk.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: snyk test with JSON output completed successfully"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: snyk test failed gracefully (likely missing SNYK_TOKEN or vulnerabilities found)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

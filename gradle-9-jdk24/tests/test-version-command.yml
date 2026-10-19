@@ -1,0 +1,22 @@
+name: Test snyk version command
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          command: version
+      - name: Assert version command succeeded
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" != "success" ]; then
+            echo "FAIL: expected 'snyk version' to succeed but got '$OUTCOME'"
+            exit 1
+          fi
+          echo "PASS: snyk version command ran successfully"

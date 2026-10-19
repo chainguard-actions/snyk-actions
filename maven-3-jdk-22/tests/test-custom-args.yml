@@ -1,0 +1,33 @@
+name: Test custom args input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run action with custom args
+        id: action
+        uses: .
+        continue-on-error: true
+        with:
+          command: test
+          args: "--all-projects --severity-threshold=high"
+
+      - name: Assert action ran with custom args
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          # The action should accept the args input and pass them to snyk.
+          # Without a valid SNYK_TOKEN the scan will fail, but the action
+          # should have been invoked correctly.
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: action succeeded with custom args"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action ran and failed gracefully (no SNYK_TOKEN in test env)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

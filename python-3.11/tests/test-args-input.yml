@@ -1,0 +1,24 @@
+name: Test snyk with additional args (--help flag)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: snyk
+        uses: .
+        with:
+          command: help
+
+      - name: Assert snyk help command succeeded
+        env:
+          OUTCOME: ${{ steps.snyk.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" != "success" ]; then
+            echo "FAIL: expected snyk help to succeed, got '$OUTCOME'"
+            exit 1
+          fi
+          echo "PASS: snyk help command succeeded with args input"
