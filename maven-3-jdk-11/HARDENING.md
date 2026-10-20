@@ -16,7 +16,7 @@ Action **snyk--actions--maven-3-jdk-11/v1.0.0** was hardened automatically. 1 fi
 
 ### unpinned-uses (severity: high)
 
-The Docker action references a mutable image tag instead of a SHA digest. `image: "docker://snyk/snyk:maven-3-jdk-11"` uses the tag `maven-3-jdk-11`, which can be silently updated to point to a different (potentially malicious) image. It should be pinned to a specific SHA digest, e.g. `image: "docker://snyk/snyk@sha256:<64-hex-char-digest> # maven-3-jdk-11"`
+The Docker action's runs.image uses a mutable tag instead of a SHA256 digest: `image: "docker://snyk/snyk:maven-3-jdk-11"`. Pin it to an image digest (snyk/snyk@sha256:<digest>).
 
 Locations:
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from `docker://snyk/snyk:maven-3-jdk-11` to `docker://snyk/snyk:maven-3-jdk-11@sha256:829f129c8dfc208ee82ad3aeb6e55f780909317c25c8a515351c81459e399b94`. The docker:// scheme and tag are preserved inline alongside the immutable digest.
+Pinned runs.image to docker://snyk/snyk:maven-3-jdk-11@sha256:829f129c8dfc208ee82ad3aeb6e55f780909317c25c8a515351c81459e399b94. Docker args left unchanged (argv, not shell).
 

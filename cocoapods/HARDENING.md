@@ -16,11 +16,11 @@ Action **snyk--actions--cocoapods/v1.0.0** was hardened automatically. 1 finding
 
 ### unpinned-uses (severity: high)
 
-The Docker action's `runs.image` field references the image `docker://snyk/snyk:cocoapods` using a mutable tag (`cocoapods`) rather than an immutable SHA digest. This means the action could silently pull a different (potentially malicious) image if the tag is moved. It should be pinned to a specific SHA digest, e.g. `image: docker://snyk/snyk@sha256:<64-hex-char-digest> # cocoapods`.
+The Docker action's runs.image uses a mutable tag instead of a SHA digest: `image: "docker://snyk/snyk:cocoapods"`. Pin it to a digest, e.g. docker://snyk/snyk@sha256:<digest> # cocoapods.
 
 Locations:
 
-- `action.yml:21`
+- `action.yml:19`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from `docker://snyk/snyk:cocoapods` to `docker://snyk/snyk:cocoapods@sha256:fa284ecf5b0048c55b6bc5c805d76aa3fcdc0781a31a5630b41076f740f13225`, preserving the `docker://` scheme and the tag inline alongside the immutable digest.
+Pinned runs.image to docker://snyk/snyk:cocoapods@sha256:fa284ecf5b0048c55b6bc5c805d76aa3fcdc0781a31a5630b41076f740f13225. Docker args left unchanged (argv, not shell).
 

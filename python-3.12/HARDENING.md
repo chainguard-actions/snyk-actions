@@ -16,11 +16,11 @@ Action **snyk--actions--python-3.12/v1.0.0** was hardened automatically. 1 findi
 
 ### unpinned-uses (severity: high)
 
-The Docker image reference in action.yml uses a mutable tag (`python-3.12`) instead of an immutable SHA digest. If the upstream image `snyk/snyk:python-3.12` is replaced or compromised on Docker Hub, any workflow using this action will silently pull the new (potentially malicious) image. It should be pinned to a specific SHA digest, e.g. `image: "docker://snyk/snyk@sha256:<64-hex-char-digest>" # python-3.12`.
+Docker action runs.image uses a tag that can change instead of a SHA digest: `image: "docker://snyk/snyk:python-3.12"`. Pin it to an image digest, for example docker://snyk/snyk@sha256:<digest> # python-3.12.
 
 Locations:
 
-- `action.yml:21`
+- `action.yml:20`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from `docker://snyk/snyk:python-3.12` to `docker://snyk/snyk:python-3.12@sha256:fe494a6023b2cee475eef32da971ea93944961e113af93101dab5b061364e42b`. The `docker://` scheme and `:python-3.12` tag are preserved inline, with the immutable SHA digest appended.
+Pinned runs.image to docker://snyk/snyk:python-3.12@sha256:fe494a6023b2cee475eef32da971ea93944961e113af93101dab5b061364e42b. Left the Docker args unchanged.
 

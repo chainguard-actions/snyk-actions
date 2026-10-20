@@ -16,11 +16,11 @@ Action **snyk--actions--gradle-jdk12/v1.0.0** was hardened automatically. 1 find
 
 ### unpinned-uses (severity: high)
 
-The composite action step uses `docker://snyk/snyk:gradle-jdk12`, which references a mutable Docker image tag (`:gradle-jdk12`) rather than an immutable SHA digest (e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest>`). If the upstream image is replaced or compromised, the action will silently execute the new, potentially malicious image. Pin the reference to a specific SHA256 digest to prevent supply-chain attacks.
+The composite action step pulls a Docker image by a mutable tag instead of a sha256 digest: `uses: docker://snyk/snyk:gradle-jdk12`. Pin it to an image digest, e.g. docker://snyk/snyk@sha256:<digest> # gradle-jdk12.
 
 Locations:
 
-- `action.yml:27`
+- `action.yml:26`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml line 27 from `docker://snyk/snyk:gradle-jdk12` to `docker://snyk/snyk:gradle-jdk12@sha256:3778c5a885c6cffa0e20bc25ebcb0229a0708365cab597ff3ff4525ff9fecc4c`. The `docker://` scheme and `:gradle-jdk12` tag are preserved inline, with the immutable digest appended to prevent supply-chain attacks from mutable tag references.
+Pinned docker://snyk/snyk:gradle-jdk12 to @sha256:3778c5a885c6cffa0e20bc25ebcb0229a0708365cab597ff3ff4525ff9fecc4c, keeping the tag inline. Left the docker step's args alone because they go to the container as an argv array, not through a shell.
 

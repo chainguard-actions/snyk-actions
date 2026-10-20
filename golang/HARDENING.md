@@ -16,11 +16,11 @@ Action **snyk--actions--golang/v1.0.0** was hardened automatically. 1 finding(s)
 
 ### unpinned-uses (severity: high)
 
-The Docker action's `runs.image:` field references a mutable image tag (`docker://snyk/snyk:golang`) instead of an immutable SHA digest. This means the action could silently pull a different (potentially malicious or broken) image on each run if the tag is updated or hijacked. It should be pinned to a specific SHA digest, e.g. `image: snyk/snyk@sha256:<64-hex-char-digest> # golang`.
+The Docker action's runs.image uses a tag that can change instead of a SHA digest: `image: "docker://snyk/snyk:golang"`. Pin it to an image digest (snyk/snyk@sha256:<digest>).
 
 Locations:
 
-- `action.yml:21`
+- `action.yml:19`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from the mutable tag `docker://snyk/snyk:golang` to the immutable digest `docker://snyk/snyk:golang@sha256:461d3729f04775a43b524bb69177d3f3f1722a910f444842409aff20aa558746`. The `docker://` scheme and `:golang` tag are preserved inline as required.
+Pinned runs.image to docker://snyk/snyk:golang@sha256:461d3729f04775a43b524bb69177d3f3f1722a910f444842409aff20aa558746. The Docker args are unchanged, because the runner passes them as an argv array with no shell, so they can't be injected into.
 

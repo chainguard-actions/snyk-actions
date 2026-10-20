@@ -16,11 +16,11 @@ Action **snyk--actions--maven-3-jdk-17/v1.0.0** was hardened automatically. 1 fi
 
 ### unpinned-uses (severity: high)
 
-The Docker action references the image `docker://snyk/snyk:maven-3-jdk-17` using a mutable tag (`maven-3-jdk-17`) rather than an immutable SHA digest. This means the image pulled at runtime could change without notice, enabling a supply-chain attack. The image reference should be pinned to a specific SHA digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest> # maven-3-jdk-17`.
+The Docker action image in runs.image uses a mutable tag instead of a SHA digest: `image: "docker://snyk/snyk:maven-3-jdk-17"`. Pin it to a digest, for example docker://snyk/snyk@sha256:<digest> # maven-3-jdk-17.
 
 Locations:
 
-- `action.yml:17`
+- `action.yml:20`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from the mutable tag `docker://snyk/snyk:maven-3-jdk-17` to the immutable digest `docker://snyk/snyk:maven-3-jdk-17@sha256:d78502400dd63d8fa7e4e268e0b6728ffdd987c5e900da2b9eb5dfe05143ce20`. The `docker://` scheme and tag are preserved inline as required.
+Pinned runs.image to docker://snyk/snyk:maven-3-jdk-17@sha256:d78502400dd63d8fa7e4e268e0b6728ffdd987c5e900da2b9eb5dfe05143ce20. Docker args left as upstream (not injectable).
 

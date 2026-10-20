@@ -16,11 +16,11 @@ Action **snyk--actions--gradle-9-jdk24/v1.0.0** was hardened automatically. 1 fi
 
 ### unpinned-uses (severity: high)
 
-The action uses a Docker image referenced by a mutable tag rather than an immutable SHA digest. `image: "docker://snyk/snyk:gradle-9-jdk24"` can silently change if the upstream image is updated or replaced, enabling a supply-chain attack. It should be pinned to a specific SHA digest, e.g. `image: "docker://snyk/snyk@sha256:<64-hex-char-digest> # gradle-9-jdk24"`.
+The Docker action's runs.image uses a mutable tag instead of a SHA digest: `image: "docker://snyk/snyk:gradle-9-jdk24"`. Pin it to an image digest (e.g. docker://snyk/snyk@sha256:<digest> # gradle-9-jdk24).
 
 Locations:
 
-- `action.yml:21`
+- `action.yml:20`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from `docker://snyk/snyk:gradle-9-jdk24` to `docker://snyk/snyk:gradle-9-jdk24@sha256:7048283c678bc6d6d3e07a9833d0d02317f3de18623c1a9586a9f0ee88c18844`, preserving the docker:// scheme and tag inline as required.
+Pinned runs.image to docker://snyk/snyk:gradle-9-jdk24@sha256:7048283c678bc6d6d3e07a9833d0d02317f3de18623c1a9586a9f0ee88c18844. Docker args left unchanged (argv, not injectable).
 

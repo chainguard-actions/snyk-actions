@@ -12,7 +12,7 @@ jobs:
           command: test
           args: --help
         continue-on-error: true
-      - name: Assert args input was accepted
+      - name: Assert action ran with args
         env:
           OUTCOME: ${{ steps.action.outcome }}
         run: |
@@ -20,7 +20,7 @@ jobs:
           if [ "$OUTCOME" = "success" ]; then
             echo "PASS: snyk test --help succeeded"
           elif [ "$OUTCOME" = "failure" ]; then
-            echo "PASS: snyk ran with args input (outcome acceptable in harness without SNYK_TOKEN)"
+            echo "PASS: snyk ran with args (non-zero exit acceptable without auth in harness)"
           else
             echo "FAIL: unexpected outcome '$OUTCOME'"
             exit 1

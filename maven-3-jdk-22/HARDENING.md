@@ -16,11 +16,11 @@ Action **snyk--actions--maven-3-jdk-22/v1.0.0** was hardened automatically. 1 fi
 
 ### unpinned-uses (severity: high)
 
-The composite action step 'Run Snyk scan' references a Docker image using a mutable tag (`docker://snyk/snyk:maven-3-jdk-22`) instead of an immutable SHA digest. This means the image can be silently replaced with a different (potentially malicious) version without any change to the action file, creating a supply-chain attack vector. It should be pinned to a specific SHA digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest>`.
+A composite action step refers to a Docker image by a mutable tag instead of a sha256 digest: `uses: docker://snyk/snyk:maven-3-jdk-22`. If someone re-pushes that tag, the action will pull and run a different image. Pin it as docker://snyk/snyk@sha256:<digest> # maven-3-jdk-22.
 
 Locations:
 
-- `action.yml:27`
+- `action.yml:26`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml line 27 from `docker://snyk/snyk:maven-3-jdk-22` to `docker://snyk/snyk:maven-3-jdk-22@sha256:ecf2d748da32d6e62c5a7667c17e8cc3850ab042c0e981ee8a95121d4440a6d6`. The `docker://` scheme is preserved, the tag is kept inline, and the digest was resolved via the Docker Registry API.
+Pinned the Snyk scan step's image in action.yml to docker://snyk/snyk:maven-3-jdk-22@sha256:ecf2d748da32d6e62c5a7667c17e8cc3850ab042c0e981ee8a95121d4440a6d6. The docker:// prefix and the tag are still in the line, and the digest comes from the registry. I left the args alone because the runner passes them to the container directly and no shell parses them.
 

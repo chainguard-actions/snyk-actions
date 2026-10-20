@@ -16,11 +16,11 @@ Action **snyk--actions--gradle-9-jdk21/v1.0.0** was hardened automatically. 1 fi
 
 ### unpinned-uses (severity: high)
 
-The Docker action references the image 'docker://snyk/snyk:gradle-9-jdk21' using a mutable tag ('gradle-9-jdk21') rather than an immutable SHA digest. This means the image can be silently replaced with a different (potentially malicious) version without any change to the action definition. It should be pinned to a specific SHA digest, e.g. 'docker://snyk/snyk@sha256:<64-hex-char-digest>'.
+The Docker action image is referenced by a mutable tag instead of a SHA digest: `image: "docker://snyk/snyk:gradle-9-jdk21"`. Whoever controls that tag can change the image, which makes this a supply-chain risk. Pin it to a digest, e.g. `docker://snyk/snyk@sha256:<digest> # gradle-9-jdk21`.
 
 Locations:
 
-- `action.yml:21`
+- `action.yml:19`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from the mutable tag 'docker://snyk/snyk:gradle-9-jdk21' to the immutable digest 'docker://snyk/snyk:gradle-9-jdk21@sha256:f3157423d40a6d84181f45d5c93e055b59f4e2d7aa987071a12eba2013bc341f'. The docker:// scheme and tag are preserved inline as required.
+Pinned runs.image to docker://snyk/snyk:gradle-9-jdk21@sha256:f3157423d40a6d84181f45d5c93e055b59f4e2d7aa987071a12eba2013bc341f. Docker args left unchanged.
 

@@ -16,11 +16,11 @@ Action **snyk--actions--gradle-jdk16/v1.0.0** was hardened automatically. 1 find
 
 ### unpinned-uses (severity: high)
 
-The composite action step 'Run Snyk scan' references a Docker image using a mutable tag (`docker://snyk/snyk:gradle-jdk16`) rather than an immutable SHA digest. This means the image can be silently replaced with a different (potentially malicious) version without any change to the action file, creating a supply-chain attack risk. It should be pinned to a specific SHA digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest> # gradle-jdk16`.
+The composite step 'Run Snyk scan' uses a mutable Docker image tag instead of a sha256 digest: `uses: docker://snyk/snyk:gradle-jdk16`. Pin it to an image digest, e.g. docker://snyk/snyk@sha256:<digest> # gradle-jdk16.
 
 Locations:
 
-- `action.yml:27`
+- `action.yml:28`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from `docker://snyk/snyk:gradle-jdk16` to `docker://snyk/snyk:gradle-jdk16@sha256:d32fdb0ff7a50f742c0744714a1df3c189b3f3336cd378b0cf190581a39ceee7`. The `docker://` scheme is preserved and the tag is kept inline alongside the digest.
+Pinned docker://snyk/snyk:gradle-jdk16 to @sha256:d32fdb0ff7a50f742c0744714a1df3c189b3f3336cd378b0cf190581a39ceee7, keeping the docker:// scheme and the tag inline. Did not change with.args: it is passed to the docker container as argv, not run through a shell.
 

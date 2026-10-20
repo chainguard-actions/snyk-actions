@@ -16,11 +16,11 @@ Action **snyk--actions--docker/v1.0.0** was hardened automatically. 1 finding(s)
 
 ### unpinned-uses (severity: high)
 
-The Docker action references a mutable image tag instead of a SHA digest. `image: "docker://snyk/snyk:docker"` uses the tag `:docker`, which can be silently replaced with a different (potentially malicious) image at any time. It should be pinned to a specific SHA256 digest, e.g. `image: "docker://snyk/snyk@sha256:<64-hex-char-digest> # docker"`.
+The Docker action image is referenced by a tag that can change (`image: "docker://snyk/snyk:docker"`) instead of an immutable SHA256 digest. If the tag is moved to a different image, every caller runs that image, which is a supply-chain risk. Pin it with @sha256:<digest>.
 
 Locations:
 
-- `action.yml:21`
+- `action.yml:22`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the mutable snyk/snyk:docker image tag to its SHA256 digest in hardened/action/action.yml. Changed `image: "docker://snyk/snyk:docker"` to `image: "docker://snyk/snyk:docker@sha256:d6595337edef7ce37eded247b8bb47ebb60681fd802c49e64c1b80b3a6963187"`. The docker:// scheme and :docker tag are preserved inline with the digest appended.
+Pinned runs.image to docker://snyk/snyk:docker@sha256:d6595337edef7ce37eded247b8bb47ebb60681fd802c49e64c1b80b3a6963187. Docker args left unchanged.
 

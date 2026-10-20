@@ -16,11 +16,11 @@ Action **snyk--actions--gradle-jdk21/v1.0.0** was hardened automatically. 1 find
 
 ### unpinned-uses (severity: high)
 
-The composite action step uses a Docker image reference with a mutable tag (`docker://snyk/snyk:gradle-jdk21`) instead of a SHA digest. This means the image can be silently replaced with a different (potentially malicious) version without any change to the action file, creating a supply-chain risk. It should be pinned to a specific SHA digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest>`.
+The composite step uses a Docker image by mutable tag rather than a SHA digest: `uses: docker://snyk/snyk:gradle-jdk21`. Pin it to an image digest, e.g. docker://snyk/snyk@sha256:<digest> # gradle-jdk21.
 
 Locations:
 
-- `action.yml:28`
+- `action.yml:26`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from `docker://snyk/snyk:gradle-jdk21` to `docker://snyk/snyk:gradle-jdk21@sha256:1af93c532fc8ff14935cb65719df5b4b9b70353cd23fe6ee8c262a579c8c4c39`. The `docker://` scheme is preserved, the mutable tag is kept inline for readability, and the immutable SHA digest is appended to prevent supply-chain attacks.
+Pinned docker://snyk/snyk:gradle-jdk21 to @sha256:1af93c532fc8ff14935cb65719df5b4b9b70353cd23fe6ee8c262a579c8c4c39, keeping the tag inline. Left the args unchanged (it is a Docker args value with no shell).
 

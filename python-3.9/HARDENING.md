@@ -16,11 +16,11 @@ Action **snyk--actions--python-3.9/v1.0.0** was hardened automatically. 1 findin
 
 ### unpinned-uses (severity: high)
 
-The Docker action image reference uses a mutable tag (`python-3.9`) instead of an immutable SHA digest. This means the action could silently pull a different (potentially malicious) image if the tag is moved. The reference `docker://snyk/snyk:python-3.9` should be replaced with a pinned digest such as `docker://snyk/snyk@sha256:<64-hex-char-digest>`.
+action.yml points the Docker image at a mutable tag instead of a SHA digest: `image: "docker://snyk/snyk:python-3.9"`. Pin it to a digest, e.g. `docker://snyk/snyk@sha256:<digest> # python-3.9`.
 
 Locations:
 
-- `action.yml:18`
+- `action.yml:19`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from `docker://snyk/snyk:python-3.9` to `docker://snyk/snyk:python-3.9@sha256:842f01064a100edf2e15d95a07ab7a892eca1262003cd2aeb4e208a53743b502`. The `docker://` scheme and `:python-3.9` tag are preserved inline, with the immutable digest appended.
+Pinned runs.image to docker://snyk/snyk:python-3.9@sha256:842f01064a100edf2e15d95a07ab7a892eca1262003cd2aeb4e208a53743b502. Docker args left unchanged (argv, not injectable).
 

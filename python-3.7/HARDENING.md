@@ -16,7 +16,7 @@ Action **snyk--actions--python-3.7/v1.0.0** was hardened automatically. 1 findin
 
 ### unpinned-uses (severity: high)
 
-The composite action step references a Docker image using a mutable tag (`docker://snyk/snyk:python-3.7`) instead of an immutable SHA digest. This means the image can be silently replaced with a different (potentially malicious) version, creating a supply-chain risk. It should be pinned to a specific SHA digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest>`.
+The composite step 'Run Snyk scan' points at a mutable Docker image tag instead of a sha256 digest: `uses: docker://snyk/snyk:python-3.7`. Whoever controls that tag can change the image at any time, so the code that runs can change without notice (a supply-chain risk). Pin it to the digest, e.g. docker://snyk/snyk@sha256:<digest> # python-3.7.
 
 Locations:
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from `docker://snyk/snyk:python-3.7` to `docker://snyk/snyk:python-3.7@sha256:ef7933377ef62ae3c4a8301be6901a7f9d82f78376496f8834c8afee8d8ba563`. The `docker://` scheme and tag are preserved inline, with the immutable SHA digest appended to prevent supply-chain attacks via mutable tag replacement.
+Pinned docker://snyk/snyk:python-3.7 to @sha256:ef7933377ef62ae3c4a8301be6901a7f9d82f78376496f8834c8afee8d8ba563, keeping the tag inline and the docker:// scheme. Docker args left unchanged (argv, not shell).
 

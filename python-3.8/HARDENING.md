@@ -16,11 +16,11 @@ Action **snyk--actions--python-3.8/v1.0.0** was hardened automatically. 1 findin
 
 ### unpinned-uses (severity: high)
 
-The composite action step references a Docker image by mutable tag rather than an immutable SHA digest. `uses: docker://snyk/snyk:python-3.8` uses the tag `python-3.8`, which can be silently replaced with different (potentially malicious) content at any time. It should be pinned to a full SHA256 digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest>`.
+A composite action step references a Docker image by a mutable tag instead of a sha256 digest: `uses: docker://snyk/snyk:python-3.8`. Pin it to a digest, e.g. docker://snyk/snyk@sha256:<digest> # python-3.8.
 
 Locations:
 
-- `action.yml:28`
+- `action.yml:26`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from the mutable tag `docker://snyk/snyk:python-3.8` to the immutable digest `docker://snyk/snyk:python-3.8@sha256:630d1028ae33184b08726c2de39c2058678a8722e7cdb685570887b0dd1782c2`. The `docker://` scheme and tag are preserved inline per the hardening rules.
+Pinned docker://snyk/snyk:python-3.8 to docker://snyk/snyk:python-3.8@sha256:630d1028ae33184b08726c2de39c2058678a8722e7cdb685570887b0dd1782c2, keeping the docker:// scheme and the tag. The Docker step's args are unchanged, because the runner passes them to the container as an argv array and they are not open to shell injection.
 

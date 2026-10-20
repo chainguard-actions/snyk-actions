@@ -16,11 +16,11 @@ Action **snyk--actions--gradle-8-jdk17/v1.0.0** was hardened automatically. 1 fi
 
 ### unpinned-uses (severity: high)
 
-The Docker action references a mutable image tag instead of a SHA digest. `image: "docker://snyk/snyk:gradle-8-jdk17"` uses the tag `gradle-8-jdk17`, which can be silently updated to point to a different (potentially malicious) image. It should be pinned to a specific SHA digest, e.g. `image: "docker://snyk/snyk@sha256:<64-hex-char-digest> # gradle-8-jdk17"`
+The Docker action's runs.image points to a mutable tag instead of a SHA digest: `image: "docker://snyk/snyk:gradle-8-jdk17"`. Pin it with an @sha256:<digest> reference.
 
 Locations:
 
-- `action.yml:21`
+- `action.yml:19`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from the mutable tag `docker://snyk/snyk:gradle-8-jdk17` to the immutable digest `docker://snyk/snyk:gradle-8-jdk17@sha256:a9bb09a0a4fd4c00766e71d51a5d7a6cba44db185e92620628c40fc61ad21312`. The `docker://` scheme is preserved as required for Docker container actions, and the tag is kept inline alongside the digest for readability.
+Pinned runs.image to docker://snyk/snyk:gradle-8-jdk17@sha256:a9bb09a0a4fd4c00766e71d51a5d7a6cba44db185e92620628c40fc61ad21312. Docker args left unchanged, since args are passed to the container as a list and no shell reads them.
 

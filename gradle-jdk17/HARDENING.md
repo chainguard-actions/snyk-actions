@@ -16,11 +16,11 @@ Action **snyk--actions--gradle-jdk17/v1.0.0** was hardened automatically. 1 find
 
 ### unpinned-uses (severity: high)
 
-The composite action step uses a Docker image reference with a mutable tag (`docker://snyk/snyk:gradle-jdk17`) instead of a SHA digest. A mutable tag can be silently updated to point to a different (potentially malicious) image, enabling supply-chain attacks. The reference should be pinned to an immutable SHA digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest>`.
+A composite action step references a docker image by a mutable tag instead of a sha256 digest: `uses: docker://snyk/snyk:gradle-jdk17`. If that tag is re-pushed, different code could run without anyone noticing. Pin it to a digest, e.g. `docker://snyk/snyk@sha256:<digest> # gradle-jdk17`.
 
 Locations:
 
-- `action.yml:28`
+- `action.yml:26`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference `docker://snyk/snyk:gradle-jdk17` to the immutable SHA digest `docker://snyk/snyk:gradle-jdk17@sha256:afedfd945ee374f2d19cbec1f97d2f4532f1cbb52388bb46b29b11dfb0d46727` in action.yml line 28. The `docker://` scheme and tag are preserved inline per the hardening guidelines.
+Pinned docker://snyk/snyk:gradle-jdk17 to @sha256:afedfd945ee374f2d19cbec1f97d2f4532f1cbb52388bb46b29b11dfb0d46727. The tag stays inline and the docker:// scheme is kept. Args were left as upstream wrote them: Docker action args are passed as an argv array, so they can't be injected.
 

@@ -16,11 +16,11 @@ Action **snyk--actions--python/v1.0.0** was hardened automatically. 1 finding(s)
 
 ### unpinned-uses (severity: high)
 
-The Docker action references a mutable image tag (`docker://snyk/snyk:python`) instead of an immutable SHA digest. If the `snyk/snyk:python` tag is updated or compromised, the action will silently pull different code on the next run, creating a supply-chain attack vector. The image reference should be pinned to a specific SHA digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest>`.
+The Docker action's runs.image uses a mutable tag instead of a SHA digest: `image: "docker://snyk/snyk:python"`. Pin it to an image digest (snyk/snyk@sha256:<digest> # python).
 
 Locations:
 
-- `action.yml:22`
+- `action.yml:20`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from `docker://snyk/snyk:python` to `docker://snyk/snyk:python@sha256:66d1e550f3034530bd019a0f589c1e96932ab6169e9b3516fe02a9256e18e7ac`. The `docker://` scheme and `:python` tag are preserved inline, with the immutable digest appended to prevent supply-chain attacks from mutable tag updates.
+Pinned runs.image to docker://snyk/snyk:python@sha256:66d1e550f3034530bd019a0f589c1e96932ab6169e9b3516fe02a9256e18e7ac. I left the Docker args (the inputs.command and inputs.args expressions) as upstream wrote them. The runner passes them to the container as separate arguments without going through a shell, so they can't be used for injection.
 

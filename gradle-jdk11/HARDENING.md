@@ -16,11 +16,11 @@ Action **snyk--actions--gradle-jdk11/v1.0.0** was hardened automatically. 1 find
 
 ### unpinned-uses (severity: high)
 
-The composite action step uses a Docker image reference with a mutable tag (`docker://snyk/snyk:gradle-jdk11`) instead of a SHA digest. This means the image can be silently replaced with a different (potentially malicious) version, creating a supply-chain risk. It should be pinned to a specific SHA digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest>`.
+A composite action step points to a Docker image by a changeable tag instead of an @sha256 digest: `uses: docker://snyk/snyk:gradle-jdk11`. Anyone who controls that tag can change what the step runs, so it is a supply-chain risk. Pin it to an image digest.
 
 Locations:
 
-- `action.yml:28`
+- `action.yml:26`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from `docker://snyk/snyk:gradle-jdk11` to `docker://snyk/snyk:gradle-jdk11@sha256:8672ee447e8dbc3d30232b95109dc77047dc47ec6e31a61c91acbcd054c6e234`. The `docker://` scheme and `:gradle-jdk11` tag are preserved inline, with the immutable SHA256 digest appended to prevent supply-chain attacks via mutable tag replacement.
+Pinned docker://snyk/snyk:gradle-jdk11 to @sha256:8672ee447e8dbc3d30232b95109dc77047dc47ec6e31a61c91acbcd054c6e234, keeping the docker:// scheme and the tag. I left the args unchanged: they go to the Docker container as an argv array, not through a shell.
 

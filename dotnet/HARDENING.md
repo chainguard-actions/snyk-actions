@@ -16,11 +16,11 @@ Action **snyk--actions--dotnet/v1.0.0** was hardened automatically. 1 finding(s)
 
 ### unpinned-uses (severity: high)
 
-The composite action step 'Run Snyk scan' references a Docker image using a mutable tag (`docker://snyk/snyk:dotnet`) instead of an immutable SHA digest. If the image at that tag is replaced, the action will silently execute different code, creating a supply-chain attack vector. It should be pinned to a specific SHA digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest>`.
+The composite step points to a Docker image by a tag that can change instead of a sha256 digest: `uses: docker://snyk/snyk:dotnet`. Pin it to a digest, e.g. `docker://snyk/snyk@sha256:<digest> # dotnet`.
 
 Locations:
 
-- `action.yml:28`
+- `action.yml:26`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from the mutable tag `docker://snyk/snyk:dotnet` to the immutable digest `docker://snyk/snyk:dotnet@sha256:7daeb8909b5c9a8201fa2db417ef4e142957a3a7cbfcb3dff12b0736643e83f6`. The `docker://` scheme and `:dotnet` tag are preserved inline alongside the digest.
+Pinned the image in action.yml from docker://snyk/snyk:dotnet to docker://snyk/snyk:dotnet@sha256:7daeb8909b5c9a8201fa2db417ef4e142957a3a7cbfcb3dff12b0736643e83f6. I kept the docker:// scheme and the tag in the reference. I left the with.args unchanged on purpose: they go to the container as argv, so they can't be used for shell injection.
 

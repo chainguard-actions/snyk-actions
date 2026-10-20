@@ -16,7 +16,7 @@ Action **snyk--actions--setup/v1.0.0** was hardened automatically. 1 finding(s) 
 
 ### script-injection (severity: high)
 
-Sub-rule (a): Two `${{ github.action_path }}` expressions are directly interpolated inside a `run:` shell block. Per the check rules, ANY `${{ ... }}` expression inside a `run:` block is a script-injection finding, regardless of which context it reads from. Line 26: `echo ${{ github.action_path }}` and line 28: `${{ github.action_path }}/setup_snyk.sh "${INPUT_SNYK_VERSION}" "${INPUT_OS}" || ...`. These should be replaced with the equivalent environment variable `$GITHUB_ACTION_PATH` (already used on line 25 and in the fallback on line 28), which is already available as a pre-set env var and does not require expression interpolation.
+Sub-rule (a): the run block in action.yml's first composite step puts a GitHub Actions expression straight into the shell script. The offending lines are `echo ${{ github.action_path }}` (line 26) and `${{ github.action_path }}/setup_snyk.sh "${INPUT_SNYK_VERSION}" "${INPUT_OS}" || ...` (line 28). Use the quoted environment variable "$GITHUB_ACTION_PATH" instead, for example `"$GITHUB_ACTION_PATH/setup_snyk.sh" "$INPUT_SNYK_VERSION" "$INPUT_OS"`.
 
 Locations:
 
@@ -31,5 +31,5 @@ Locations:
 
 **Notes:**
 
-Replaced both `${{ github.action_path }}` expressions in the `run:` block with `$GITHUB_ACTION_PATH` (the equivalent pre-set GitHub Actions environment variable). Removed the redundant `echo ${{ github.action_path }}` debug line (the `echo $GITHUB_ACTION_PATH` above it already serves that purpose) and simplified the script call from a `primary || fallback` pattern (where both sides were identical after substitution) to a single `$GITHUB_ACTION_PATH/setup_snyk.sh` invocation.
+Replaced ${{ github.action_path }} in action.yml run block with quoted "$GITHUB_ACTION_PATH" (echo and script invocation, including the fallback retry). Step uses shell: bash so the $VAR syntax is correct.
 

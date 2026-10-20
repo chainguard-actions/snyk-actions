@@ -16,11 +16,11 @@ Action **snyk--actions--sbt1.10.0-scala3.4.2/v1.0.0** was hardened automatically
 
 ### unpinned-uses (severity: high)
 
-The Docker action's `runs.image` references a mutable image tag (`docker://snyk/snyk:sbt1.10.0-scala3.4.2`) instead of an immutable SHA digest. If the image at this tag is replaced, the action will silently execute different code, enabling a supply-chain attack. It should be pinned to a specific SHA digest, e.g. `docker://snyk/snyk@sha256:<64-hex-char-digest>`.
+The Docker action points to its image by a mutable tag instead of a SHA digest: `image: "docker://snyk/snyk:sbt1.10.0-scala3.4.2"`. Pin it to an @sha256:<digest> reference.
 
 Locations:
 
-- `action.yml:21`
+- `action.yml:20`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Pinned the Docker image reference in action.yml from the mutable tag `docker://snyk/snyk:sbt1.10.0-scala3.4.2` to the immutable digest `docker://snyk/snyk:sbt1.10.0-scala3.4.2@sha256:627230d43bf033532912b1c99e43ccc9737b80a0d58eada5cfac7677ecf5ee37`. The `docker://` scheme and tag are preserved inline.
+Pinned runs.image to docker://snyk/snyk:sbt1.10.0-scala3.4.2@sha256:627230d43bf033532912b1c99e43ccc9737b80a0d58eada5cfac7677ecf5ee37. Args were left unchanged because docker args reach the container as a list of arguments with no shell, so they can't be used for injection.
 
